@@ -1,9 +1,5 @@
-import dateUtils from './dateUtils';
-import localDB from './localDB';
-import convenience from './convenience';
+import data from './data';
 
 export default {
-    dateUtils,
-    localDB,
-    convenience,
+    data
 };

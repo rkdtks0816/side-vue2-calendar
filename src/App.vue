@@ -42,21 +42,21 @@
             </div>
         </div>
         <div class="TodolistBox">
-            <todolist @AddTodoBt="AddTodoBt" @CheckTodoBt="CheckTodoBt"></todolist>
+            <todolist></todolist>
         </div>
     </div>
-    <div v-if="nowdata.bt === 'MonthBt'" class="CalendarBox">
-        <month @WeekBt="WeekBt" @DayBt="DayBt" :ScheduleList="ScheduleList" @AddScheduleBt="AddScheduleBt" @ViewScheduleBt="ViewScheduleBt"></month>
+    <div v-if="nowdata.CalenderType === 'Month'" class="CalendarBox">
+        <month :nowdata="nowdata" :ScheduleList="ScheduleList"></month>
     </div>
-    <div v-else-if="nowdata.bt === 'WeekBt'" class="CalendarBox">
-        <week @MonthBt="MonthBt" @DayBt="DayBt" :ScheduleList="ScheduleList" @AddScheduleBt="AddScheduleBt" @ViewScheduleBt="ViewScheduleBt"></week>
+    <div v-else-if="nowdata.CalenderType === 'Week'" class="CalendarBox">
+        <week :nowdata="nowdata" :ScheduleList="ScheduleList"></week>
     </div>
     <div v-else class="CalendarBox">
-        <day @MonthBt="MonthBt" @WeekBt="WeekBt" :ScheduleList="ScheduleList" @AddScheduleBt="AddScheduleBt" @ViewScheduleBt="ViewScheduleBt"></day>
+        <day :nowdata="nowdata" :ScheduleList="ScheduleList"></day>
     </div>
-    <div class="ScheduleClickBox" v-if="BtState">
+    <div class="ScheduleClickBox" v-if="nowdata.schedule_modal">
         <div class="SchedulePositionBox">
-            <schedulelist @AddScheduleList="AddScheduleList" @CancelBt="CancelBt" @DeleteSchedule="DeleteSchedule" @EditScheduleList="EditScheduleList"></schedulelist>
+            <schedulelist></schedulelist>
         </div>
     </div>
 </template>
@@ -80,90 +80,14 @@
         data() {
             return {
                 ScheduleList: [],
-                nowdata: {},
-                todaydata: {
-                    year: new Date().getFullYear(),
-                    month: new Date().getMonth() + 1,
-                    date: new Date().getDate(),
-                    time: ('0' + new Date().getHours()).slice(-2) + ":" + ('0' + new Date().getMinutes()).slice(-2),
-                    StartTime: ('0' + new Date().getHours()).slice(-2) + ":" + ('0' + new Date().getMinutes()).slice(-2),
-                    EndTime: ('0' + new Date().getHours()).slice(-2) + ":" + ('0' + new Date().getMinutes()).slice(-2),
-                    bt : "MonthBt",
-                    schedule: "add"
-                },
-                BtState: false
+                nowdata: {}
             }
         },
         created() {
-            this.LoadCalendarDate();
+            $Utils.data.now_data();
+            $Utils.data.schedulelist_data();
         },
         methods: {
-            LoadCalendarDate() {
-                var savedata = localStorage.getItem("nowdata");
-                this.nowdata = (savedata != null) ? JSON.parse(savedata) : this.todaydata;
-                localStorage.setItem("nowdata", JSON.stringify(this.nowdata));
-                var saveschedulelist = localStorage.getItem("schedulelist");
-                this.ScheduleList = (saveschedulelist != null) ? JSON.parse(saveschedulelist) : [];
-            },
-            MonthBt() {
-                var savedata = localStorage.getItem("nowdata");
-                this.nowdata = (savedata != null) ? JSON.parse(savedata) : this.todaydata;
-                this.nowdata.bt = "MonthBt";
-                localStorage.setItem("nowdata", JSON.stringify(this.nowdata));
-            },
-            WeekBt() {
-                var savedata = localStorage.getItem("nowdata");
-                this.nowdata = (savedata != null) ? JSON.parse(savedata) : this.todaydata;
-                this.nowdata.bt = "WeekBt";
-                localStorage.setItem("nowdata", JSON.stringify(this.nowdata));
-            },
-            DayBt() {
-                var savedata = localStorage.getItem("nowdata");
-                this.nowdata = (savedata != null) ? JSON.parse(savedata) : this.todaydata;
-                this.nowdata.bt = "DayBt";
-                localStorage.setItem("nowdata", JSON.stringify(this.nowdata));
-            },
-            AddTodoBt(NewTodo) {
-                var NewTodoJson = {};
-
-                if(NewTodo == ''){
-                    alert('값을 입력해 주세요.');
-                    return;
-                }
-
-                var savetodolist = localStorage.getItem("todolist");
-                var todolist = (savetodolist != null) ? JSON.parse(savetodolist) : []; 
-
-                NewTodoJson.id = (todolist.length !== 0) ? Number([...todolist].sort((a, b) => b['id'] - a['id'] )[0].id) + 1 : 1;
-                NewTodoJson.Todo = NewTodo;
-
-                todolist.push(NewTodoJson);
-                todolist.sort((a, b) => a['checkstate'] - b['checkstate'] )
-                localStorage.setItem("todolist", JSON.stringify(todolist));
-                this.LoadCalendarDate();
-            },
-            CheckTodoBt(index) {
-                var savetodolist = localStorage.getItem("todolist");
-                var todolist = (savetodolist != null) ? JSON.parse(savetodolist) : []; 
-                todolist.splice(index, 1);
-                localStorage.setItem("todolist", JSON.stringify(todolist));
-                this.LoadCalendarDate();
-            },
-            AddScheduleBt(date, time) {
-                var savedata = localStorage.getItem("nowdata");
-                this.nowdata = (savedata != null) ? JSON.parse(savedata) : this.todaydata;
-                this.nowdata.date = date;
-                this.nowdata.StartTime = time;
-                this.nowdata.EndTime = time;
-                this.nowdata.schedule = "add";
-                localStorage.setItem("nowdata", JSON.stringify(this.nowdata));
-                this.BtState = true;
-                this.LoadCalendarDate();
-            },
-            CancelBt() {
-                this.BtState = false;
-                this.LoadCalendarDate();
-            },
             AddScheduleList(NewSchedule, NewStartDate, NewStartTime, NewEndDate, NewEndTime) {
                 var NewScheduleJson = {};
 
