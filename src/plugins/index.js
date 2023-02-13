@@ -1,7 +1,7 @@
-import Utils from './utils/index';
+import utils from './utils/index';
 
 export default {
     install(Vue) {
-        Vue.prototype.$Utils = Utils;
+        Vue.prototype.$utils = utils;
     }
 }

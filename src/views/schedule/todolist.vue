@@ -26,27 +26,28 @@
 <script>
     export default {
         emits: [
-            'AddTodoBt',
-            'CheckTodoBt'
+            'todo_list'
         ],
         data() {
             return {
-                NewTodo: '',
-                TodoList: []
+                new_todo: '',
             }
         },
-        mounted() {
-            this.loadTodoList();
-        },
         methods: {
-            loadTodoList() {
-                var savetodolist = localStorage.getItem('todolist');
-                this.TodoList = (savetodolist) ? JSON.parse(savetodolist) : [];
-            },
-            AddTodo() {
-                this.$emit("AddTodoBt", this.NewTodo)
-                this.NewTodo="";
-                this.loadTodoList();
+            AddTodoBt() {
+                var NewTodoJson = {};
+                let let_todo_list = (this.todo_list != []) ? this.todo_list : [];
+
+                if(NewTodo == ''){
+                    alert('값을 입력해 주세요.');
+                    return;
+                }
+
+                NewTodoJson.id = (todolist.length !== 0) ? Number([...let_todo_list].sort((a, b) => b['id'] - a['id'] )[0].id) + 1 : 1;
+                NewTodoJson.Todo = NewTodo;
+
+                let_todo_list.push(NewTodoJson);
+                this.$emit("update_todo_list", let_todo_list);
             },
             CheckTodo(index) {
                 this.$emit("CheckTodoBt", index)

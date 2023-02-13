@@ -27,12 +27,12 @@
     </div>
     <div class="ScheduleBox" v-else-if="nowdata.schedule === 'view'">
         <div class="ScheduleTitleBox">
-            <span class="ScheduleViewTitle">내용 : </span>  
+            <span class="ScheduleViewTitle">내용</span>  
             <span class="ScheduleText">{{ ScheduleList[nowdata.scheduleindex].Schedule }}</span>        
         </div>
         <div class="ScheduleTime">
             <div class="ScheduleStartTime">
-                <span class="ScheduleStartTimeViewTitle">시작 : </span>
+                <span class="ScheduleStartTimeViewTitle">시작</span>
                 <span class="ScheduleText" v-if="ScheduleList[nowdata.scheduleindex].StartTime !== 'AllDay'">
                     {{ 
                         ScheduleList[nowdata.scheduleindex].StartDate.slice(0, 4) + "-" +
@@ -51,7 +51,7 @@
                 </span>
             </div>           
             <div class="ScheduleEndTime">
-                <span class="ScheduleEndTimeViewTitle">종료 : </span>  
+                <span class="ScheduleEndTimeViewTitle">종료</span>  
                 <span class="ScheduleText" v-if="ScheduleList[nowdata.scheduleindex].StartTime !== 'AllDay'">
                     {{ 
                         ScheduleList[nowdata.scheduleindex].EndDate.slice(0, 4) + "-" +
@@ -71,7 +71,7 @@
             </div>           
         </div>   
         <div class="ScheduleBt">
-            <span class="SaveBt" @click="EditScheduleBt(ScheduleList[nowdata.scheduleindex].StartTime, ScheduleList[nowdata.scheduleindex].EndTime, nowdata.scheduleindex)">수정</span>    
+            <span class="SaveBt" @click="EditScheduleBt(nowdata.scheduleindex)">수정</span>    
             <span class="SaveBt" @click="DeleteScheduleBt(nowdata.scheduleindex)">삭제</span>    
             <span class="CancelBt" @click="CancelBt()">닫기</span>          
         </div>
@@ -136,9 +136,9 @@
                 
                 var nowdate = this.nowdata.year + '-' + ('0' + this.nowdata.month).slice(-2) + '-' + ('0' + this.nowdata.date).slice(-2);
                 this.NewStartDate = nowdate;
-                this.NewStartTime = this.nowdata.StartTime.slice(0, 2) + ":" + this.nowdata.StartTime.slice(-2);
+                this.NewStartTime = this.nowdata.time;
                 this.NewEndDate = nowdate;
-                this.NewEndTime = this.nowdata.EndTime.slice(0, 2) + ":" + this.nowdata.EndTime.slice(-2);;
+                this.NewEndTime = this.nowdata.time;
                 if (this.nowdata.time === 'Al:ay') {
                     this.AllDayCheck = true
                 }
@@ -160,15 +160,13 @@
             CancelBt() {
                 this.$emit("CancelBt");
             },
-            EditScheduleBt(StartTime, EndTime, index) {
+            EditScheduleBt(index) {
                 if (this.ScheduleList[index].StartTime === 'AllDay') {
                     this.AllDayCheck = true
                 }
                 this.NewScheduleItem = this.ScheduleList[index].Schedule;
                 var savedata = localStorage.getItem("nowdata");
                 this.nowdata = JSON.parse(savedata);
-                this.nowdata.StartTime =  StartTime.slice(0, 2) + ":" + StartTime.slice(-2);
-                this.nowdata.EndTime = EndTime.slice(0, 2) + ":" + EndTime.slice(-2);
                 this.nowdata.schedule = "edit";
                 localStorage.setItem("nowdata", JSON.stringify(this.nowdata));
                 this.loadScheduleList();
